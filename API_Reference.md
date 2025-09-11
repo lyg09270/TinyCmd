@@ -9,6 +9,18 @@
 - **`CMD_SEND_CHAR(c)`**
   - **Purpose**: Used to send a character to the user.
   - **Description**: By default, it uses `TinyCmd_SendChar(c)` to send characters. If you need to use a custom `putchar` function, you can redefine this macro.
+
+- **`USE_USART_DMA_SEND_STR`**
+  - **Purpose**: Used to enable or disable the use of USART DMA.
+  - **Description**: If defined, it enables the use of USART DMA for sending strings. If not defined, it disables the use of USART DMA.
+
+- **`CMD_SEND_STRING(str)`**
+  - **Purpose**: Used to send a string to the user.
+  - **Description**: If `USE USART DMA SEND STR` is defined, the string will be sent using `TinyCmd SendString(str)`. If 'USE USART DMA SEND STR' is not defined,  will use `CMD_SEND_CHAR(c)` sends characters.
+  - **Note**:
+    - If `USE USART DMA SEND STR` is defined, it is necessary to ensure that the `TinyCmd SendString(str)` function is implemented correctly and is consistent with the definition of the `CMD SEND STRING(str)` macro.
+    - This function is used to enhance the performance of serial port transmission, especially when using USART+DMA.
+
 - **`CMD_RPT_BUF_SIZE`**
   - **Purpose**: The size of the report buffer, used to store data to be sent.
   - **Default Value**: 255
@@ -41,6 +53,10 @@
 - **`SendCharFunc`**
   - **Purpose**: Function pointer type for sending characters.
   - **Definition**: `typedef void (*SendCharFunc)(char c);`
+
+- **`SendStringFunc`**
+  - **Purpose**: Function pointer type for sending strings.
+  - **Definition**: `typedef void (*SendStringFunc)(const char* str);`
 
 #### Enumerations
 
@@ -113,7 +129,7 @@
 
 #### Functions
 
-- **`char\* TinyCmd_strcpy(char\* dest, const char\* src)`**
+- **`char* TinyCmd_strcpy(char* dest, const char* src)`**
 
   - **Purpose**: Copies a string.
 
@@ -139,7 +155,7 @@
     - `TINYCMD_SUCCESS`: Processing successful.
     - `TINYCMD_FAILED`: Processing failed.
 
-- **`TinyCmd_Status TinyCmd_Add_Cmd(TinyCmd_Command\* newCmd)`**
+- **`TinyCmd_Status TinyCmd_Add_Cmd(TinyCmd_Command* newCmd)`**
 
   - **Purpose**: Adds a new command to the list of recognizable and executable commands.
 
@@ -156,7 +172,7 @@
     - `TINYCMD_SUCCESS`: Addition successful.
     - `TINYCMD_FAILED`: Addition failed.
 
-- **`TinyCmd_Status TinyCmd_Arg_Check(const char\* arg1, TinyCmd_Counter_Type p_arg2)`**
+- **`TinyCmd_Status TinyCmd_Arg_Check(const char* arg1, TinyCmd_Counter_Type p_arg2)`**
 
   - **Purpose**: Checks an argument.
 
@@ -186,7 +202,7 @@
 
   - **Return Value**: Length of the argument.
 
-- **`TinyCmd_Status TinyCmd_Arg_To_Num(TinyCmd_Counter_Type p_arg, void\* out_val, TinyCmd_NumType type)`**
+- **`TinyCmd_Status TinyCmd_Arg_To_Num(TinyCmd_Counter_Type p_arg, void* out_val, TinyCmd_NumType type)`**
 
   - **Purpose**: Converts an argument to a specified numeric type.
 
@@ -205,7 +221,7 @@
     - `TINYCMD_SUCCESS`: Conversion successful.
     - `TINYCMD_FAILED`: Conversion failed.
 
-- **`TinyCmd_Status TinyCmd_Report(const char\* format, ...)`**
+- **`TinyCmd_Status TinyCmd_Report(const char* format, ...)`**
 
   - **Purpose**: Reports information.
 

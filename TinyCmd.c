@@ -359,9 +359,14 @@ static void dtoa(double value, char* buffer, int precision) {
 //TinyCmd_Status TinyCmd_SendChar(char c)
 //Description:Send a character to some where user designated.
 static void send_string(const char* str) {
-    while (*str) {
+#ifndef USE_USART_DMA_SEND_STR
+    while (*str)
+    {
         CMD_SEND_CHAR(*str++);
     }
+#else
+    CMD_SEND_STRING(str);
+#endif
 }
 
 //TinyCmd_Status TinyCmd_trim(char *str)
@@ -423,6 +428,13 @@ TinyCmd_Status TinyCmd_Handler(void) {
         token = TinyCmd_strtok_s(NULL, delims ,&context);
     }
 
+    TinyCmd_Report("Command: %s\n", command);
+    TinyCmd_Report("Number of args: %d\n", i);
+    for (TinyCmd_Counter_Type j = 0; j < i; j++)
+    {
+        TinyCmd_Report("Arg[%d]: %s\n", j, TinyCmd_buf.arg[j]);
+    }
+    
     //Excute callback function of command
     for (i = 0; i < TinyCmdRunning_Cmd.length; i++) {
 

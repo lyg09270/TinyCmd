@@ -11,6 +11,18 @@
 - **`CMD_SEND_CHAR(c)`**
   - **用途**：用于发送字符到用户。
   - **描述**：默认使用 `TinyCmd_SendChar(c)` 发送字符。如果需要使用自定义的 `putchar` 函数，可以重新定义此宏。
+
+- **`USE_USART_DMA_SEND_STR`**
+  - **用途**：与`CMD_SEND_STRING(str)`搭配使用，用于启用或禁用 USART DMA 发送字符串。
+  - **描述**：如果定义了此宏，将启用 USART DMA 发送字符串。如果未定义，将禁用 USART DMA 发送字符串。
+
+- **`CMD_SEND_STRING(str)`**
+  - **用途**：用于发送字符串到用户。
+  - **描述**：如果 `USE_USART_DMA_SEND_STR` 定义了，将使用 `TinyCmd_SendString(str)` 发送字符串。 如果未定义 `USE_USART_DMA_SEND_STR`，将使用 `CMD_SEND_CHAR(c)` 发送字符。
+  - **注意**：
+    - 如果定义了 `USE_USART_DMA_SEND_STR`，则需要确保 `TinyCmd_SendString(str)` 函数已正确实现，并且与 `CMD_SEND_STRING(str)` 宏的定义一致。
+    - 这个函数用于提高串口发送的性能，尤其是在使用USART+DMA时。
+
 - **`CMD_RPT_BUF_SIZE`**
   - **用途**：报告缓冲区的大小，用于存储待发送的数据
   - **默认值**：255
@@ -43,6 +55,10 @@
 - **`SendCharFunc`**
   - **用途**：发送字符的函数指针类型。
   - **定义**：`typedef void (*SendCharFunc)(char c);`
+
+- **`SendStringFunc`**
+  - **用途**：发送字符串的函数指针类型。
+  - **定义**：`typedef void (*SendStringFunc)(const char* str);`
 
 #### 枚举
 

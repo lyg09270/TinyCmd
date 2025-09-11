@@ -32,10 +32,20 @@ extern "C" {
 #endif
 
 //This macro is used to send a character to the user
-//If you have a "putchar" function but it has different type from 
+//If you have a "putchar" function but it has different type from
 //"typedef void (*SendCharFunc)(char c);" such as "int (*SendCharFunc)(char c)"
 //You can redefine this function by you "putchar" function to prevent the warrings.
 #define CMD_SEND_CHAR(c) TinyCmd_SendChar(c)
+
+// This macro is used to enable USART send by DMA
+// If you want to use TinyCmd_SendString(str), you must enable this macro
+// #define USE_USART_DMA_SEND_STR
+
+//This macro is used to send a string to the user
+//If you want to send data using DMA + USART, implementing a TinyCmd SendChar(c) is a huge waste of performance.
+//TinyCmd SendChar(c) function can only send one character at a time.
+//Implementing a function that continuously sends strings is a better choice
+#define CMD_SEND_STRING(str) TinyCmd_SendString(str)
 
 //Constant for configure TinyCmd****************************************************************//
 
@@ -69,6 +79,10 @@ typedef unsigned char TinyCmd_Counter_Type;
 //description: This function is used to send a character to the user,=
 typedef void (*SendCharFunc)(char c);
 
+// SendStringFunc type for TinyCmd
+// description: This function is used to send string to the user,
+typedef void (*SendStringFunc)(const char *str);
+
 //Global structs****************************************************************************//
 
 //TinyCmd input buffer struct:
@@ -88,7 +102,7 @@ typedef struct TinyCmd_inuput{
 //callback: The callback function pointer
 typedef struct TinyCmd_Command{
 	const char* command;
-	TinyCmd_CallBack_Ret (*callback)(void);	
+	TinyCmd_CallBack_Ret (*callback)(void);
 }TinyCmd_Command;
 
 //Global enums****************************************************************************//
